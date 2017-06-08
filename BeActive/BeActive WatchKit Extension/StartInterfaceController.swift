@@ -24,7 +24,7 @@ class StartInterfaceController: WKInterfaceController {
         ("Cycling", .cycling)
     ]
 
-    var currentActivity = (name: "Strength Training", type: HKWorkoutActivityType.functionalStrengthTraining)
+    private var currentActivity = (name: "Strength Training", type: HKWorkoutActivityType.functionalStrengthTraining)
 
     // MARK: - WKInterfaceController
     override func awake(withContext context: Any?) {
@@ -38,7 +38,7 @@ class StartInterfaceController: WKInterfaceController {
     ///
     /// - Parameter dictionary: An activity dictionary.
     /// - Returns: A picker items array.
-    func makePickerItems(from activities: [(name: String, type: HKWorkoutActivityType)]) -> [WKPickerItem] {
+    private func makePickerItems(from activities: [(name: String, type: HKWorkoutActivityType)]) -> [WKPickerItem] {
         var activityItems = [WKPickerItem]()
 
         for activity in activities {
@@ -57,9 +57,8 @@ class StartInterfaceController: WKInterfaceController {
         currentActivity = activities[value]
     }
 
-
     /// Pushes the ActivityInterfaceController onto the scene.
-    @IBAction func startButtonPressed() {
+    @IBAction private func startButtonPressed() {
         guard HKHealthStore.isHealthDataAvailable() else { return }
         pushController(withName: "Activity", context: currentActivity)
     }

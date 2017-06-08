@@ -33,5 +33,9 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
+	<key>NSHealthShareUsageDescription</key>
+	<string>The app can share your Health data.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>The app can update your Health data.</string>
 </dict>
 </plist>

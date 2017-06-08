@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import HealthKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -38,6 +39,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    }
+
+    func applicationShouldRequestHealthAuthorization(_ application: UIApplication) {
+        // Called when your app should ask the user for access to his or her HealthKit data.
+        let healthStore = HKHealthStore()
+        healthStore.handleAuthorizationForExtension { (_, _) in }
     }
 
 }
