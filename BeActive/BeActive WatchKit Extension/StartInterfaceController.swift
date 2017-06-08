@@ -24,7 +24,7 @@ class StartInterfaceController: WKInterfaceController {
         ("Cycling", .cycling)
     ]
 
-    var currentActivity = HKWorkoutActivityType.functionalStrengthTraining
+    var currentActivity = (name: "Strength Training", type: HKWorkoutActivityType.functionalStrengthTraining)
 
     // MARK: - WKInterfaceController
     override func awake(withContext context: Any?) {
@@ -54,10 +54,13 @@ class StartInterfaceController: WKInterfaceController {
     ///
     /// - Parameter value: A value of the selected line.
     @IBAction private func activityPickerChanged(_ value: Int) {
-        currentActivity = activities[value].type
+        currentActivity = activities[value]
     }
 
+
+    /// Pushes the ActivityInterfaceController onto the scene.
     @IBAction func startButtonPressed() {
-        print(currentActivity.rawValue)
+        guard HKHealthStore.isHealthDataAvailable() else { return }
+        pushController(withName: "Activity", context: currentActivity)
     }
 }

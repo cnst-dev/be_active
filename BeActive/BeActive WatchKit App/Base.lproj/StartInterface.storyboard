@@ -9,10 +9,10 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="12029"/>
     </dependencies>
     <scenes>
-        <!--Start Interface Controller-->
+        <!--Start-->
         <scene sceneID="aou-V4-d1y">
             <objects>
-                <controller id="AgC-eL-Hgc" customClass="StartInterfaceController" customModule="BeActive_WatchKit_Extension">
+                <controller identifier="Start" id="AgC-eL-Hgc" customClass="StartInterfaceController" customModule="BeActive_WatchKit_Extension">
                     <items>
                         <label alignment="center" text="Activity Type:" id="3Ks-bq-WYv"/>
                         <picker height="0.20000000000000001" alignment="left" focusStyle="stack" indicatorMode="shownWhileFocused" id="mSj-vB-mCu">

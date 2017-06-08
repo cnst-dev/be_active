@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CFA1D75B1EE93216003B37AF /* ActivityInteface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CFA1D75A1EE93216003B37AF /* ActivityInteface.storyboard */; };
+		CFA1D75D1EE93230003B37AF /* ActivityInterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA1D75C1EE93230003B37AF /* ActivityInterfaceController.swift */; };
 		CFC50F0C1EE8296900ED1172 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC50F0B1EE8296900ED1172 /* AppDelegate.swift */; };
 		CFC50F111EE8296900ED1172 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CFC50F0F1EE8296900ED1172 /* Main.storyboard */; };
 		CFC50F131EE8296900ED1172 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFC50F121EE8296900ED1172 /* Assets.xcassets */; };
@@ -66,6 +68,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		CFA1D75A1EE93216003B37AF /* ActivityInteface.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = ActivityInteface.storyboard; sourceTree = "<group>"; };
+		CFA1D75C1EE93230003B37AF /* ActivityInterfaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityInterfaceController.swift; sourceTree = "<group>"; };
 		CFC50F081EE8296900ED1172 /* BeActive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BeActive.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFC50F0B1EE8296900ED1172 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CFC50F101EE8296900ED1172 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -108,6 +112,52 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CFA1D7551EE93127003B37AF /* SupportingFiles */ = {
+			isa = PBXGroup;
+			children = (
+				CFC50F341EE8296A00ED1172 /* Info.plist */,
+				CFC50F321EE8296A00ED1172 /* Assets.xcassets */,
+				CFC50F301EE8296A00ED1172 /* ExtensionDelegate.swift */,
+				CFC50F4C1EE82D4100ED1172 /* BeActive WatchKit Extension.entitlements */,
+			);
+			name = SupportingFiles;
+			sourceTree = "<group>";
+		};
+		CFA1D7561EE9314C003B37AF /* Supporting files */ = {
+			isa = PBXGroup;
+			children = (
+				CFC50F0B1EE8296900ED1172 /* AppDelegate.swift */,
+				CFC50F481EE82D3A00ED1172 /* BeActive.entitlements */,
+				CFC50F121EE8296900ED1172 /* Assets.xcassets */,
+				CFC50F171EE8296900ED1172 /* Info.plist */,
+			);
+			name = "Supporting files";
+			sourceTree = "<group>";
+		};
+		CFA1D7571EE9318B003B37AF /* View */ = {
+			isa = PBXGroup;
+			children = (
+				CFC50F0F1EE8296900ED1172 /* Main.storyboard */,
+				CFC50F141EE8296900ED1172 /* LaunchScreen.storyboard */,
+			);
+			name = View;
+			sourceTree = "<group>";
+		};
+		CFA1D7581EE9319C003B37AF /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				CFC50F441EE82C6000ED1172 /* MainViewController.swift */,
+			);
+			name = Controller;
+			sourceTree = "<group>";
+		};
+		CFA1D7591EE931A8003B37AF /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
 		CFC50EFF1EE8296900ED1172 = {
 			isa = PBXGroup;
 			children = (
@@ -132,13 +182,10 @@
 		CFC50F0A1EE8296900ED1172 /* BeActive */ = {
 			isa = PBXGroup;
 			children = (
-				CFC50F481EE82D3A00ED1172 /* BeActive.entitlements */,
-				CFC50F441EE82C6000ED1172 /* MainViewController.swift */,
-				CFC50F0B1EE8296900ED1172 /* AppDelegate.swift */,
-				CFC50F0F1EE8296900ED1172 /* Main.storyboard */,
-				CFC50F121EE8296900ED1172 /* Assets.xcassets */,
-				CFC50F141EE8296900ED1172 /* LaunchScreen.storyboard */,
-				CFC50F171EE8296900ED1172 /* Info.plist */,
+				CFA1D7591EE931A8003B37AF /* Model */,
+				CFA1D7571EE9318B003B37AF /* View */,
+				CFA1D7581EE9319C003B37AF /* Controller */,
+				CFA1D7561EE9314C003B37AF /* Supporting files */,
 			);
 			path = BeActive;
 			sourceTree = "<group>";
@@ -147,6 +194,7 @@
 			isa = PBXGroup;
 			children = (
 				CFC50F1F1EE8296900ED1172 /* StartInterface.storyboard */,
+				CFA1D75A1EE93216003B37AF /* ActivityInteface.storyboard */,
 				CFC50F221EE8296900ED1172 /* Assets.xcassets */,
 				CFC50F241EE8296900ED1172 /* Info.plist */,
 			);
@@ -156,11 +204,9 @@
 		CFC50F2D1EE8296A00ED1172 /* BeActive WatchKit Extension */ = {
 			isa = PBXGroup;
 			children = (
-				CFC50F4C1EE82D4100ED1172 /* BeActive WatchKit Extension.entitlements */,
 				CFC50F461EE82CAB00ED1172 /* StartInterfaceController.swift */,
-				CFC50F301EE8296A00ED1172 /* ExtensionDelegate.swift */,
-				CFC50F321EE8296A00ED1172 /* Assets.xcassets */,
-				CFC50F341EE8296A00ED1172 /* Info.plist */,
+				CFA1D75C1EE93230003B37AF /* ActivityInterfaceController.swift */,
+				CFA1D7551EE93127003B37AF /* SupportingFiles */,
 			);
 			path = "BeActive WatchKit Extension";
 			sourceTree = "<group>";
@@ -304,6 +350,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFA1D75B1EE93216003B37AF /* ActivityInteface.storyboard in Resources */,
 				CFC50F231EE8296900ED1172 /* Assets.xcassets in Resources */,
 				CFC50F211EE8296900ED1172 /* StartInterface.storyboard in Resources */,
 			);
@@ -365,6 +412,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CFC50F471EE82CAB00ED1172 /* StartInterfaceController.swift in Sources */,
+				CFA1D75D1EE93230003B37AF /* ActivityInterfaceController.swift in Sources */,
 				CFC50F311EE8296A00ED1172 /* ExtensionDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -624,6 +672,7 @@
 				CFC50F391EE8296A00ED1172 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		CFC50F3B1EE8296A00ED1172 /* Build configuration list for PBXNativeTarget "BeActive WatchKit App" */ = {
 			isa = XCConfigurationList;
@@ -632,6 +681,7 @@
 				CFC50F3D1EE8296A00ED1172 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		CFC50F3F1EE8296A00ED1172 /* Build configuration list for PBXNativeTarget "BeActive" */ = {
 			isa = XCConfigurationList;
@@ -640,6 +690,7 @@
 				CFC50F411EE8296A00ED1172 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

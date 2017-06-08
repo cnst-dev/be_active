@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="12120" systemVersion="16F73" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="watch38" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="watchOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="12029"/>
+    </dependencies>
+    <scenes>
+        <!--Activity-->
+        <scene sceneID="Yl1-bW-MPJ">
+            <objects>
+                <controller identifier="Activity" id="zD9-Y8-AD6" customClass="ActivityInterfaceController" customModule="BeActive_WatchKit_Extension">
+                    <items>
+                        <label alignment="left" text="Activity" id="Bl1-RX-V81"/>
+                    </items>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="72" y="2"/>
+        </scene>
+    </scenes>
+</document>
