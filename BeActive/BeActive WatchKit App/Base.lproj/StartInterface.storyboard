@@ -12,7 +12,25 @@
         <!--Start Interface Controller-->
         <scene sceneID="aou-V4-d1y">
             <objects>
-                <controller id="AgC-eL-Hgc" customClass="StartInterfaceController" customModule="BeActive_WatchKit_Extension"/>
+                <controller id="AgC-eL-Hgc" customClass="StartInterfaceController" customModule="BeActive_WatchKit_Extension">
+                    <items>
+                        <label alignment="center" text="Activity Type:" id="3Ks-bq-WYv"/>
+                        <picker height="0.20000000000000001" alignment="left" focusStyle="stack" indicatorMode="shownWhileFocused" id="mSj-vB-mCu">
+                            <connections>
+                                <action selector="activityPickerChanged:" destination="AgC-eL-Hgc" id="gl0-PP-rxW"/>
+                            </connections>
+                        </picker>
+                        <button width="1" alignment="left" title="Start" id="c5T-R5-fFD">
+                            <color key="backgroundColor" red="0.95294117649999999" green="0.50588235290000005" blue="0.50588235290000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <connections>
+                                <action selector="startButtonPressed" destination="AgC-eL-Hgc" id="y9w-ng-4ac"/>
+                            </connections>
+                        </button>
+                    </items>
+                    <connections>
+                        <outlet property="activityPicker" destination="mSj-vB-mCu" id="gvA-2i-wNh"/>
+                    </connections>
+                </controller>
             </objects>
         </scene>
     </scenes>
