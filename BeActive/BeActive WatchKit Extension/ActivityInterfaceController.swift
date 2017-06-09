@@ -26,14 +26,25 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
     }
     private let healthStore = HKHealthStore()
     private var startDate = Date()
+    private var endDate = Date()
     private var activeDataQueries = [HKQuery]()
-    private var activitySession: HKWorkoutSession?
+    private var currentSession: HKWorkoutSession?
+    private var isSessionActive: Bool {
+        return currentSession?.state == HKWorkoutSessionState.running
+    }
 
     private var currentHeartRate = 0.0 {
         didSet {
+            print("Heart rate \(currentHeartRate)")
             DispatchQueue.main.async { [weak self] in
                 self?.heartRateLabel.setText(self?.currentHeartRate.description)
             }
+        }
+    }
+
+    var totalEnergyBurned = HKQuantity(unit: HKUnit.kilocalorie(), doubleValue: 0.0) {
+        didSet {
+            print("Energy burned: \(totalEnergyBurned)")
         }
     }
 
@@ -50,7 +61,7 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
     override func willDisappear() {
         super.willDisappear()
 
-        guard let session = activitySession else { return }
+        guard let session = currentSession else { return }
         healthStore.end(session)
         for query in activeDataQueries {
             healthStore.stop(query)
@@ -64,19 +75,26 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
     /// - Parameter healthStore: HealthStore object.
     private func requestAutorization(in healthStore: HKHealthStore) {
 
-        let savedTypes: Set<HKSampleType> = [HKSampleType.quantityType(forIdentifier: .heartRate)!]
-        let readedTypes: Set<HKObjectType> = [HKObjectType.quantityType(forIdentifier: .heartRate)!]
+        let typesToSave: Set<HKSampleType> = [
+            .workoutType(),
+            HKSampleType.quantityType(forIdentifier: .heartRate)!,
+            HKSampleType.quantityType(forIdentifier: .activeEnergyBurned)!]
+        let typesToRead: Set<HKObjectType> = [
+            .activitySummaryType(),
+            HKObjectType.quantityType(forIdentifier: .heartRate)!,
+            HKObjectType.quantityType(forIdentifier: .activeEnergyBurned)!
+        ]
 
-        healthStore.requestAuthorization(toShare: savedTypes, read: readedTypes, completion: { [weak self] (success, _) in
+        healthStore.requestAuthorization(toShare: typesToSave, read: typesToRead, completion: { [weak self] (success, _) in
             if success {
                 self?.startSession(for: (self?.currentActivity.type)!)
             }
         })
     }
 
-    /// Starts executing the provided query.
+    /// Starts executing the provided query for a quantity sample type.
     ///
-    /// - Parameter quantityTypeIdentifier: The provided query.
+    /// - Parameter quantityTypeIdentifier: A quantity sample type.
     private func startQuery(for quantityTypeIdentifier: HKQuantityTypeIdentifier) {
 
         /// The predicate that matches all the objects that were created by the curent device.
@@ -91,8 +109,7 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
         let updateHanler: (HKAnchoredObjectQuery, [HKSample]?, [HKDeletedObject]?, HKQueryAnchor?, Error?) -> Void = {
             [weak self] (query, samples, deletedObjects, queryAnchor, error) in
             guard let samples = samples as? [HKQuantitySample] else { return }
-            guard let heartRate = samples.last?.quantity.doubleValue(for: HKUnit(from: "count/min")) else { return }
-            self?.currentHeartRate = heartRate
+            self?.process(samples: samples, for: quantityTypeIdentifier)
         }
 
         let query = HKAnchoredObjectQuery(
@@ -105,9 +122,10 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
         activeDataQueries.append(query)
     }
 
-    /// Start queries
+    /// Start queries.
     private func startQueries() {
         startQuery(for: .heartRate)
+        startQuery(for: .activeEnergyBurned)
         WKInterfaceDevice.current().play(.start)
     }
 
@@ -120,16 +138,56 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
         config.locationType = .outdoor
 
         guard let session = try? HKWorkoutSession(configuration: config) else { return }
-        activitySession = session
+        currentSession = session
         healthStore.start(session)
         startDate = Date()
         session.delegate = self
     }
 
+    /// Saves a workout session.
+    ///
+    /// - Parameter session: A workout session.
+    private func saveSession(_ session: HKWorkoutSession) {
+        let config = session.workoutConfiguration
+
+        let workout = HKWorkout(activityType: config.activityType, start: startDate, end: endDate,
+                                workoutEvents: nil, totalEnergyBurned: totalEnergyBurned, totalDistance: nil,
+                                metadata: [HKMetadataKeyIndoorWorkout: false])
+        healthStore.save(workout) { [weak self] (success, _) in
+            if success {
+                self?.pop()
+            }
+        }
+
+    }
+
+    /// Passes data from samples to properties.
+    ///
+    /// - Parameters:
+    ///   - samples: Data samples.
+    ///   - quantityTypeIdentifier: A quantity sample type.
+    func process(samples: [HKQuantitySample], for quantityTypeIdentifier: HKQuantityTypeIdentifier) {
+
+        guard isSessionActive else { return }
+
+        for sample in samples {
+            switch quantityTypeIdentifier {
+            case HKQuantityTypeIdentifier.heartRate:
+                currentHeartRate = sample.quantity.doubleValue(for: HKUnit(from: "count/min"))
+            case HKQuantityTypeIdentifier.activeEnergyBurned:
+                let newEnergy = sample.quantity.doubleValue(for: HKUnit(from: .kilocalorie))
+                let currentEnergy = totalEnergyBurned.doubleValue(for: HKUnit(from: .kilocalorie))
+                totalEnergyBurned = HKQuantity(unit: HKUnit(from: .kilocalorie), doubleValue: currentEnergy + newEnergy)
+            default:
+                break
+            }
+        }
+    }
+
     // MARK: - Actions
     /// Pauses the session.
     @IBAction private func pauseButtonPressed() {
-        guard let session = activitySession else { return }
+        guard let session = currentSession else { return }
         pauseButton.setHidden(true)
         continueButton.setHidden(false)
         endButton.setHidden(false)
@@ -138,7 +196,7 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
 
     /// Resumes the session.
     @IBAction private func continueButtonPressed() {
-        guard let session = activitySession else { return }
+        guard let session = currentSession else { return }
         pauseButton.setHidden(false)
         continueButton.setHidden(true)
         endButton.setHidden(false)
@@ -147,11 +205,14 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
 
     /// Pops the interface controller
     @IBAction private func endButtonPressed() {
-        pop()
+        guard let session = currentSession else { return }
+        endDate = Date()
+        saveSession(session)
     }
 
     // MARK: - HKWorkoutSessionDelegate
     func workoutSession(_ workoutSession: HKWorkoutSession, didChangeTo toState: HKWorkoutSessionState, from fromState: HKWorkoutSessionState, date: Date) {
+        guard toState == .running && fromState == .notStarted else { return }
         startQueries()
     }
 
