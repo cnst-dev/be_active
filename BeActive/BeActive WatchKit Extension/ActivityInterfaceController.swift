@@ -17,6 +17,7 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
     @IBOutlet private var pauseButton: WKInterfaceButton!
     @IBOutlet private var continueButton: WKInterfaceButton!
     @IBOutlet private var endButton: WKInterfaceButton!
+    @IBOutlet private var timer: WKInterfaceTimer!
 
     // MARK: - Properties
     private var currentActivity = (name: "Cycling", type: HKWorkoutActivityType.cycling) {
@@ -26,6 +27,8 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
     }
     private let healthStore = HKHealthStore()
     private var startDate = Date()
+    private var pauseDate = Date()
+    private var pausesIntervals = TimeInterval(floatLiteral: 0.0)
     private var endDate = Date()
     private var activeDataQueries = [HKQuery]()
     private var currentSession: HKWorkoutSession?
@@ -142,6 +145,8 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
         healthStore.start(session)
         startDate = Date()
         session.delegate = self
+        timer.setDate(startDate)
+        timer.start()
     }
 
     /// Saves a workout session.
@@ -192,6 +197,8 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
         continueButton.setHidden(false)
         endButton.setHidden(false)
         healthStore.pause(session)
+        timer.stop()
+        pauseDate = Date()
     }
 
     /// Resumes the session.
@@ -201,6 +208,10 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
         continueButton.setHidden(true)
         endButton.setHidden(false)
         healthStore.resumeWorkoutSession(session)
+        pausesIntervals += pauseDate.timeIntervalSinceNow
+        let interval = startDate.timeIntervalSinceNow - pausesIntervals
+        timer.setDate(Date(timeIntervalSinceNow: interval))
+        timer.start()
     }
 
     /// Pops the interface controller

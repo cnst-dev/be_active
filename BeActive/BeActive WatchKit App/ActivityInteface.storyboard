@@ -14,36 +14,44 @@
             <objects>
                 <controller identifier="Activity" id="zD9-Y8-AD6" customClass="ActivityInterfaceController" customModule="BeActive_WatchKit_Extension">
                     <items>
+                        <timer alignment="center" id="6Zd-Uc-HKg">
+                            <color key="textColor" red="0.01448708214" green="0.66109091040000001" blue="0.96040183310000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        </timer>
                         <label alignment="center" text="---" id="Bl1-RX-V81">
                             <color key="textColor" red="0.95294117649999999" green="0.50588235290000005" blue="0.50588235290000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                            <fontDescription key="font" type="system" pointSize="38"/>
+                            <fontDescription key="font" type="system" pointSize="40"/>
                         </label>
                         <label alignment="center" text="BEATS/MINUTE" id="aye-IH-Bkv"/>
                         <separator alignment="left" id="Oou-ak-vCf"/>
-                        <button width="1" height="0.25" alignment="left" title="PAUSE" id="fjo-3Q-7gt">
-                            <color key="backgroundColor" red="0.58431372550000005" green="0.88235294119999996" blue="0.82745098039999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                            <connections>
-                                <action selector="pauseButtonPressed" destination="zD9-Y8-AD6" id="a16-yT-WJt"/>
-                            </connections>
-                        </button>
-                        <button width="1" height="0.25" alignment="left" hidden="YES" title="CONTINUE" id="OxS-S3-Eog">
-                            <color key="backgroundColor" red="0.58431372550000005" green="0.88235294119999996" blue="0.82745098039999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                            <connections>
-                                <action selector="continueButtonPressed" destination="zD9-Y8-AD6" id="OGd-Aa-Z3v"/>
-                            </connections>
-                        </button>
-                        <button width="1" height="0.25" alignment="left" title="END" id="ymF-hE-FA3">
-                            <color key="backgroundColor" red="0.95294117649999999" green="0.50588235290000005" blue="0.50588235290000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                            <connections>
-                                <action selector="endButtonPressed" destination="zD9-Y8-AD6" id="xPE-uf-ZEB"/>
-                            </connections>
-                        </button>
+                        <group width="1" height="0.29999999999999999" alignment="left" id="R6h-bS-6xv">
+                            <items>
+                                <button width="0.5" height="1" alignment="left" title="PAUSE" id="fjo-3Q-7gt">
+                                    <color key="backgroundColor" red="0.58431372550000005" green="0.88235294119999996" blue="0.82745098039999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <connections>
+                                        <action selector="pauseButtonPressed" destination="zD9-Y8-AD6" id="a16-yT-WJt"/>
+                                    </connections>
+                                </button>
+                                <button width="0.5" height="1" alignment="left" hidden="YES" title="CONTINUE" id="OxS-S3-Eog">
+                                    <color key="backgroundColor" red="0.58431372550000005" green="0.88235294119999996" blue="0.82745098039999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <connections>
+                                        <action selector="continueButtonPressed" destination="zD9-Y8-AD6" id="OGd-Aa-Z3v"/>
+                                    </connections>
+                                </button>
+                                <button width="0.5" height="1" alignment="left" title="END" id="ymF-hE-FA3">
+                                    <color key="backgroundColor" red="0.95294117649999999" green="0.50588235290000005" blue="0.50588235290000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <connections>
+                                        <action selector="endButtonPressed" destination="zD9-Y8-AD6" id="xPE-uf-ZEB"/>
+                                    </connections>
+                                </button>
+                            </items>
+                        </group>
                     </items>
                     <connections>
                         <outlet property="continueButton" destination="OxS-S3-Eog" id="Sxk-UA-lBq"/>
                         <outlet property="endButton" destination="ymF-hE-FA3" id="fdi-Ul-BIU"/>
                         <outlet property="heartRateLabel" destination="Bl1-RX-V81" id="7TY-pn-1kE"/>
                         <outlet property="pauseButton" destination="fjo-3Q-7gt" id="hF0-EP-dZG"/>
+                        <outlet property="timer" destination="6Zd-Uc-HKg" id="ynP-fP-vGf"/>
                     </connections>
                 </controller>
             </objects>
