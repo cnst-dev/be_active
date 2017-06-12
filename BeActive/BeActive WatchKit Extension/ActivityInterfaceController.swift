@@ -12,8 +12,14 @@ import HealthKit
 
 class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelegate {
 
+    // MARK: - Nested
+    enum HUDTypes: String {
+        case heartRate = "BEATS/MINUTE", energy = "Kilocalories"
+    }
+
     // MARK: - Outlets
-    @IBOutlet private var heartRateLabel: WKInterfaceLabel!
+    @IBOutlet private var valueLabel: WKInterfaceLabel!
+    @IBOutlet var unitLabel: WKInterfaceLabel!
     @IBOutlet private var pauseButton: WKInterfaceButton!
     @IBOutlet private var continueButton: WKInterfaceButton!
     @IBOutlet private var endButton: WKInterfaceButton!
@@ -25,6 +31,8 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
             setTitle(currentActivity.name)
         }
     }
+
+    private var currentHUDType = HUDTypes.heartRate
     private let healthStore = HKHealthStore()
     private var startDate = Date()
     private var pauseDate = Date()
@@ -39,8 +47,9 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
     private var currentHeartRate = 0.0 {
         didSet {
             print("Heart rate \(currentHeartRate)")
+            guard currentHUDType == .heartRate else { return }
             DispatchQueue.main.async { [weak self] in
-                self?.heartRateLabel.setText(self?.currentHeartRate.description)
+                self?.valueLabel.setText(self?.currentHeartRate.description)
             }
         }
     }
@@ -48,6 +57,11 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
     var totalEnergyBurned = HKQuantity(unit: HKUnit.kilocalorie(), doubleValue: 0.0) {
         didSet {
             print("Energy burned: \(totalEnergyBurned)")
+            guard currentHUDType == .energy else { return }
+            DispatchQueue.main.async { [weak self] in
+                guard let energy = self?.totalEnergyBurned.doubleValue(for: HKUnit.kilocalorie()) else { return }
+                self?.valueLabel.setText(String(format: "%.0f", energy))
+            }
         }
     }
 
@@ -190,6 +204,21 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
     }
 
     // MARK: - Actions
+    /// Sets the current HUD type.
+    @IBAction private func interfaceButtonPressed() {
+        switch currentHUDType {
+        case .heartRate:
+            currentHUDType = .energy
+            let energy = totalEnergyBurned.doubleValue(for: HKUnit.kilocalorie())
+            valueLabel.setText(String(format: "%.0f", energy))
+            unitLabel.setText(currentHUDType.rawValue)
+        case .energy:
+            currentHUDType = .heartRate
+            valueLabel.setText(currentHeartRate.description)
+            unitLabel.setText(currentHUDType.rawValue)
+        }
+    }
+
     /// Pauses the session.
     @IBAction private func pauseButtonPressed() {
         guard let session = currentSession else { return }
@@ -214,7 +243,7 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
         timer.start()
     }
 
-    /// Pops the interface controller
+    /// Pops the interface controller.
     @IBAction private func endButtonPressed() {
         guard let session = currentSession else { return }
         endDate = Date()

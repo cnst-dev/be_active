@@ -14,14 +14,23 @@
             <objects>
                 <controller identifier="Activity" id="zD9-Y8-AD6" customClass="ActivityInterfaceController" customModule="BeActive_WatchKit_Extension">
                     <items>
-                        <timer alignment="center" id="6Zd-Uc-HKg">
-                            <color key="textColor" red="0.01448708214" green="0.66109091040000001" blue="0.96040183310000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        </timer>
-                        <label alignment="center" text="---" id="Bl1-RX-V81">
-                            <color key="textColor" red="0.95294117649999999" green="0.50588235290000005" blue="0.50588235290000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                            <fontDescription key="font" type="system" pointSize="40"/>
-                        </label>
-                        <label alignment="center" text="BEATS/MINUTE" id="aye-IH-Bkv"/>
+                        <button alignment="left" id="hPT-i8-tNY">
+                            <group key="contentGroup" width="1" alignment="left" layout="vertical" id="St4-uC-uUr">
+                                <items>
+                                    <timer alignment="center" id="6Zd-Uc-HKg">
+                                        <color key="textColor" red="0.01448708214" green="0.66109091040000001" blue="0.96040183310000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </timer>
+                                    <label alignment="center" text="---" id="Bl1-RX-V81">
+                                        <color key="textColor" red="0.95294117649999999" green="0.50588235290000005" blue="0.50588235290000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <fontDescription key="font" type="system" pointSize="40"/>
+                                    </label>
+                                    <label alignment="center" text="BEATS/MINUTE" id="aye-IH-Bkv"/>
+                                </items>
+                            </group>
+                            <connections>
+                                <action selector="interfaceButtonPressed" destination="zD9-Y8-AD6" id="m2i-BC-e6g"/>
+                            </connections>
+                        </button>
                         <separator alignment="left" id="Oou-ak-vCf"/>
                         <group width="1" height="0.29999999999999999" alignment="left" id="R6h-bS-6xv">
                             <items>
@@ -49,9 +58,10 @@
                     <connections>
                         <outlet property="continueButton" destination="OxS-S3-Eog" id="Sxk-UA-lBq"/>
                         <outlet property="endButton" destination="ymF-hE-FA3" id="fdi-Ul-BIU"/>
-                        <outlet property="heartRateLabel" destination="Bl1-RX-V81" id="7TY-pn-1kE"/>
                         <outlet property="pauseButton" destination="fjo-3Q-7gt" id="hF0-EP-dZG"/>
                         <outlet property="timer" destination="6Zd-Uc-HKg" id="ynP-fP-vGf"/>
+                        <outlet property="unitLabel" destination="aye-IH-Bkv" id="Vd4-BH-lxg"/>
+                        <outlet property="valueLabel" destination="Bl1-RX-V81" id="j9G-SH-fDr"/>
                     </connections>
                 </controller>
             </objects>
