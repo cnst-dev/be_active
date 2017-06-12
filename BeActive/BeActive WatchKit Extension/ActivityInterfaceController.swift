@@ -14,7 +14,7 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
 
     // MARK: - Nested
     enum HUDTypes: String {
-        case heartRate = "BEATS/MINUTE", energy = "Kilocalories"
+        case heartRate = "BEATS/MINUTE", energy = "Kilocalories", distance = "Kilometers"
     }
 
     // MARK: - Outlets
@@ -26,12 +26,13 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
     @IBOutlet private var timer: WKInterfaceTimer!
 
     // MARK: - Properties
-    private var currentActivity = (name: "Cycling", type: HKWorkoutActivityType.cycling) {
+    private var currentActivity = (name: "Swimming", type: HKWorkoutActivityType.swimming) {
         didSet {
             setTitle(currentActivity.name)
         }
     }
 
+    private var distanceType = HKQuantityTypeIdentifier.distanceSwimming
     private var currentHUDType = HUDTypes.heartRate
     private let healthStore = HKHealthStore()
     private var startDate = Date()
@@ -65,11 +66,33 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
         }
     }
 
+    var totalDistance = HKQuantity(unit: HKUnit.meter(), doubleValue: 0.0) {
+        didSet {
+            print("Total distance: \(totalDistance)")
+            guard currentHUDType == .distance else { return }
+            DispatchQueue.main.async { [weak self] in
+                guard let meters = self?.totalDistance.doubleValue(for: HKUnit.meter()) else { return }
+                self?.valueLabel.setText(String(format: "%.2f", meters / 1000))
+            }
+        }
+    }
+
     // MARK: - WKInterfaceController
     override func awake(withContext context: Any?) {
         super.awake(withContext: context)
         guard let activity = context as? (name: String, type: HKWorkoutActivityType) else { return }
         currentActivity = activity
+
+        switch activity.type {
+        case .swimming:
+            distanceType = .distanceSwimming
+        case .cycling:
+            distanceType = .distanceCycling
+        case .running:
+            distanceType = .distanceWalkingRunning
+        default:
+            break
+        }
 
         requestAutorization(in: healthStore)
     }
@@ -95,12 +118,13 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
         let typesToSave: Set<HKSampleType> = [
             .workoutType(),
             HKSampleType.quantityType(forIdentifier: .heartRate)!,
-            HKSampleType.quantityType(forIdentifier: .activeEnergyBurned)!]
+            HKSampleType.quantityType(forIdentifier: .activeEnergyBurned)!,
+            HKSampleType.quantityType(forIdentifier: distanceType)!]
         let typesToRead: Set<HKObjectType> = [
             .activitySummaryType(),
             HKObjectType.quantityType(forIdentifier: .heartRate)!,
-            HKObjectType.quantityType(forIdentifier: .activeEnergyBurned)!
-        ]
+            HKObjectType.quantityType(forIdentifier: .activeEnergyBurned)!,
+            HKObjectType.quantityType(forIdentifier: distanceType)!]
 
         healthStore.requestAuthorization(toShare: typesToSave, read: typesToRead, completion: { [weak self] (success, _) in
             if success {
@@ -143,6 +167,7 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
     private func startQueries() {
         startQuery(for: .heartRate)
         startQuery(for: .activeEnergyBurned)
+        startQuery(for: distanceType)
         WKInterfaceDevice.current().play(.start)
     }
 
@@ -153,12 +178,19 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
         let config = HKWorkoutConfiguration()
         config.activityType = type
         config.locationType = .outdoor
+        config.swimmingLocationType = .unknown
 
-        guard let session = try? HKWorkoutSession(configuration: config) else { return }
+        guard let session = try? HKWorkoutSession(configuration: config) else {
+            let action = WKAlertAction(title: "OK", style: .default, handler: { [weak self] in
+                self?.pop()
+            })
+            presentAlert(withTitle: "Ooops!", message: "\(currentActivity.name) session is not supported on this device.", preferredStyle: .alert, actions: [action])
+            return
+        }
         currentSession = session
-        healthStore.start(session)
+        healthStore.start(currentSession!)
         startDate = Date()
-        session.delegate = self
+        currentSession?.delegate = self
         timer.setDate(startDate)
         timer.start()
     }
@@ -170,7 +202,7 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
         let config = session.workoutConfiguration
 
         let workout = HKWorkout(activityType: config.activityType, start: startDate, end: endDate,
-                                workoutEvents: nil, totalEnergyBurned: totalEnergyBurned, totalDistance: nil,
+                                workoutEvents: nil, totalEnergyBurned: totalEnergyBurned, totalDistance: totalDistance,
                                 metadata: [HKMetadataKeyIndoorWorkout: false])
         healthStore.save(workout) { [weak self] (success, _) in
             if success {
@@ -197,6 +229,10 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
                 let newEnergy = sample.quantity.doubleValue(for: HKUnit(from: .kilocalorie))
                 let currentEnergy = totalEnergyBurned.doubleValue(for: HKUnit(from: .kilocalorie))
                 totalEnergyBurned = HKQuantity(unit: HKUnit(from: .kilocalorie), doubleValue: currentEnergy + newEnergy)
+            case distanceType:
+                let newDistance = sample.quantity.doubleValue(for: HKUnit(from: .meter))
+                let currentDistance = totalDistance.doubleValue(for: HKUnit(from: .meter))
+                totalDistance = HKQuantity(unit: HKUnit(from: .meter), doubleValue: newDistance + currentDistance)
             default:
                 break
             }
@@ -213,6 +249,11 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
             valueLabel.setText(String(format: "%.0f", energy))
             unitLabel.setText(currentHUDType.rawValue)
         case .energy:
+            currentHUDType = .distance
+            let meters = totalDistance.doubleValue(for: HKUnit.meter())
+            valueLabel.setText(String(format: "%.2f", meters / 1000))
+            unitLabel.setText(currentHUDType.rawValue)
+        case .distance:
             currentHUDType = .heartRate
             valueLabel.setText(currentHeartRate.description)
             unitLabel.setText(currentHUDType.rawValue)

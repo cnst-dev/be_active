@@ -17,14 +17,12 @@ class StartInterfaceController: WKInterfaceController {
 
     // MARK: - Properties
     private let activities: [(name: String, type: HKWorkoutActivityType)] = [
-        ("Strength Training", .functionalStrengthTraining),
-        ("Yoga", .yoga),
-        ("Running", .running),
-        ("Meditation", .mindAndBody),
-        ("Cycling", .cycling)
+        ("Swimming", .swimming),
+        ("Cycling", .cycling),
+        ("Running", .running)
     ]
 
-    private var currentActivity = (name: "Strength Training", type: HKWorkoutActivityType.functionalStrengthTraining)
+    private var currentActivity = (name: "Swimming", type: HKWorkoutActivityType.swimming)
 
     // MARK: - WKInterfaceController
     override func awake(withContext context: Any?) {
