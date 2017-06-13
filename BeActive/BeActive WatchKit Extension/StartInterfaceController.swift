@@ -22,13 +22,11 @@ class StartInterfaceController: WKInterfaceController {
         MovementActivity(name: "Running", type: .running, distanceType: .distanceWalkingRunning)
     ]
 
-    private var currentActivity: MovementActivity!
+    private var currentActivity = MovementActivity(name: "Swimming", type: .swimming, distanceType: .distanceSwimming)
 
     // MARK: - WKInterfaceController
     override func awake(withContext context: Any?) {
         super.awake(withContext: context)
-
-        currentActivity = activities.first
 
         activityPicker.setItems(makePickerItems(from: activities))
     }

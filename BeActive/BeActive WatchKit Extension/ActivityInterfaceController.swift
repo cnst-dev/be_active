@@ -26,7 +26,7 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
     @IBOutlet private var timer: WKInterfaceTimer!
 
     // MARK: - Properties
-    private var currentActivity: MovementActivity! {
+    private var currentActivity = MovementActivity(name: "Swimming", type: .swimming, distanceType: .distanceSwimming) {
         didSet {
             setTitle(currentActivity.name)
         }
@@ -104,6 +104,7 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
             HKSampleType.quantityType(forIdentifier: .heartRate)!,
             HKSampleType.quantityType(forIdentifier: .activeEnergyBurned)!,
             HKSampleType.quantityType(forIdentifier: currentActivity.distanceType)!]
+
         let typesToRead: Set<HKObjectType> = [
             .activitySummaryType(),
             HKObjectType.quantityType(forIdentifier: .heartRate)!,
@@ -173,6 +174,7 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
             presentAlert(withTitle: "Ooops!", message: "\(currentActivity.name) session is not supported on this device.", preferredStyle: .alert, actions: [action])
             return
         }
+
         currentSession = session
         healthStore.start(currentSession!)
         startDate = Date()
@@ -255,9 +257,6 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
     /// Pauses the session.
     @IBAction private func pauseButtonPressed() {
         guard let session = currentSession else { return }
-        pauseButton.setHidden(true)
-        continueButton.setHidden(false)
-        endButton.setHidden(false)
         healthStore.pause(session)
         timer.stop()
         pauseDate = Date()
@@ -266,9 +265,6 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
     /// Resumes the session.
     @IBAction private func continueButtonPressed() {
         guard let session = currentSession else { return }
-        pauseButton.setHidden(false)
-        continueButton.setHidden(true)
-        endButton.setHidden(false)
         healthStore.resumeWorkoutSession(session)
         pausesIntervals += pauseDate.timeIntervalSinceNow
         let interval = startDate.timeIntervalSinceNow - pausesIntervals
@@ -283,8 +279,20 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
 
     // MARK: - HKWorkoutSessionDelegate
     func workoutSession(_ workoutSession: HKWorkoutSession, didChangeTo toState: HKWorkoutSessionState, from fromState: HKWorkoutSessionState, date: Date) {
-        guard toState == .running && fromState == .notStarted else { return }
-        startQueries()
+
+        switch toState {
+        case .running:
+            pauseButton.setHidden(false)
+            continueButton.setHidden(true)
+            if fromState == .notStarted {
+                startQueries()
+            }
+        case .paused:
+            pauseButton.setHidden(true)
+            continueButton.setHidden(false)
+        default:
+            break
+        }
     }
 
     func workoutSession(_ workoutSession: HKWorkoutSession, didFailWithError error: Error) {
