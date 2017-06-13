@@ -53,7 +53,7 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
         }
     }
 
-    var totalEnergyBurned = HKQuantity(unit: HKUnit.kilocalorie(), doubleValue: 0.0) {
+    private var totalEnergyBurned = HKQuantity(unit: HKUnit.kilocalorie(), doubleValue: 0.0) {
         didSet {
             print("Energy burned: \(totalEnergyBurned)")
             guard currentHUDType == .energy else { return }
@@ -64,7 +64,7 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
         }
     }
 
-    var totalDistance = HKQuantity(unit: HKUnit.meter(), doubleValue: 0.0) {
+    private var totalDistance = HKQuantity(unit: HKUnit.meter(), doubleValue: 0.0) {
         didSet {
             print("Total distance: \(totalDistance)")
             guard currentHUDType == .distance else { return }
@@ -198,7 +198,7 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
     /// Ends a workout session.
     ///
     /// - Parameter session: A workout session.
-    func endSession(_ session: HKWorkoutSession) {
+    private func endSession(_ session: HKWorkoutSession) {
         healthStore.end(session)
         for query in activeDataQueries {
             healthStore.stop(query)
@@ -211,7 +211,7 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
     /// - Parameters:
     ///   - samples: Data samples.
     ///   - quantityTypeIdentifier: A quantity sample type.
-    func process(samples: [HKQuantitySample], for quantityTypeIdentifier: HKQuantityTypeIdentifier) {
+    private func process(samples: [HKQuantitySample], for quantityTypeIdentifier: HKQuantityTypeIdentifier) {
 
         guard isSessionActive else { return }
 
