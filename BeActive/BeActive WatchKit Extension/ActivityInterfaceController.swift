@@ -38,7 +38,6 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
     private var startDate = Date()
     private var pauseDate = Date()
     private var pausesIntervals = TimeInterval(floatLiteral: 0.0)
-    private var endDate = Date()
     private var activeDataQueries = [HKQuery]()
     private var currentSession: HKWorkoutSession?
     private var isSessionActive: Bool {
@@ -80,6 +79,7 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
     // MARK: - WKInterfaceController
     override func awake(withContext context: Any?) {
         super.awake(withContext: context)
+
         guard let activity = context as? (name: String, type: HKWorkoutActivityType) else { return }
         currentActivity = activity
 
@@ -100,13 +100,9 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
     /// End the session and stops queries before removing the interface controller.
     override func willDisappear() {
         super.willDisappear()
-
         guard let session = currentSession else { return }
-        healthStore.end(session)
-        for query in activeDataQueries {
-            healthStore.stop(query)
-        }
-        activeDataQueries.removeAll()
+        saveSession(session)
+        endSession(session)
     }
 
     // MARK: - HealthKit
@@ -133,6 +129,7 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
         })
     }
 
+    // MARK: Queries
     /// Starts executing the provided query for a quantity sample type.
     ///
     /// - Parameter quantityTypeIdentifier: A quantity sample type.
@@ -171,6 +168,7 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
         WKInterfaceDevice.current().play(.start)
     }
 
+    // MARK: Session
     /// Starts a workout session for an activity type.
     ///
     /// - Parameter type: An activity type.
@@ -201,15 +199,21 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
     private func saveSession(_ session: HKWorkoutSession) {
         let config = session.workoutConfiguration
 
-        let workout = HKWorkout(activityType: config.activityType, start: startDate, end: endDate,
+        let workout = HKWorkout(activityType: config.activityType, start: startDate, end: Date(),
                                 workoutEvents: nil, totalEnergyBurned: totalEnergyBurned, totalDistance: totalDistance,
                                 metadata: [HKMetadataKeyIndoorWorkout: false])
-        healthStore.save(workout) { [weak self] (success, _) in
-            if success {
-                self?.pop()
-            }
-        }
+        healthStore.save(workout) { (_, _) in }
+    }
 
+    /// Ends a workout session.
+    ///
+    /// - Parameter session: A workout session.
+    func endSession(_ session: HKWorkoutSession) {
+        healthStore.end(session)
+        for query in activeDataQueries {
+            healthStore.stop(query)
+        }
+        activeDataQueries.removeAll()
     }
 
     /// Passes data from samples to properties.
@@ -286,9 +290,7 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
 
     /// Pops the interface controller.
     @IBAction private func endButtonPressed() {
-        guard let session = currentSession else { return }
-        endDate = Date()
-        saveSession(session)
+        pop()
     }
 
     // MARK: - HKWorkoutSessionDelegate
