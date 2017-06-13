@@ -23,6 +23,8 @@
 		CFC50F471EE82CAB00ED1172 /* StartInterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC50F461EE82CAB00ED1172 /* StartInterfaceController.swift */; };
 		CFC50F4B1EE82D3A00ED1172 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFC50F4A1EE82D3A00ED1172 /* HealthKit.framework */; };
 		CFC50F4E1EE82D4100ED1172 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFC50F4D1EE82D4100ED1172 /* HealthKit.framework */; };
+		CFCF95771EEFC9FB00D7078D /* MovementActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFCF95761EEFC9FB00D7078D /* MovementActivity.swift */; };
+		CFCF95781EEFC9FB00D7078D /* MovementActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFCF95761EEFC9FB00D7078D /* MovementActivity.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -90,6 +92,7 @@
 		CFC50F4A1EE82D3A00ED1172 /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
 		CFC50F4C1EE82D4100ED1172 /* BeActive WatchKit Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "BeActive WatchKit Extension.entitlements"; sourceTree = "<group>"; };
 		CFC50F4D1EE82D4100ED1172 /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS3.2.sdk/System/Library/Frameworks/HealthKit.framework; sourceTree = DEVELOPER_DIR; };
+		CFCF95761EEFC9FB00D7078D /* MovementActivity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MovementActivity.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -154,6 +157,7 @@
 		CFA1D7591EE931A8003B37AF /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				CFCF95761EEFC9FB00D7078D /* MovementActivity.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -403,6 +407,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CFC50F0C1EE8296900ED1172 /* AppDelegate.swift in Sources */,
+				CFCF95771EEFC9FB00D7078D /* MovementActivity.swift in Sources */,
 				CFC50F451EE82C6000ED1172 /* MainViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -412,6 +417,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CFC50F471EE82CAB00ED1172 /* StartInterfaceController.swift in Sources */,
+				CFCF95781EEFC9FB00D7078D /* MovementActivity.swift in Sources */,
 				CFA1D75D1EE93230003B37AF /* ActivityInterfaceController.swift in Sources */,
 				CFC50F311EE8296A00ED1172 /* ExtensionDelegate.swift in Sources */,
 			);

@@ -26,13 +26,12 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
     @IBOutlet private var timer: WKInterfaceTimer!
 
     // MARK: - Properties
-    private var currentActivity = (name: "Swimming", type: HKWorkoutActivityType.swimming) {
+    private var currentActivity: MovementActivity! {
         didSet {
             setTitle(currentActivity.name)
         }
     }
 
-    private var distanceType = HKQuantityTypeIdentifier.distanceSwimming
     private var currentHUDType = HUDTypes.heartRate
     private let healthStore = HKHealthStore()
     private var startDate = Date()
@@ -80,19 +79,8 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
     override func awake(withContext context: Any?) {
         super.awake(withContext: context)
 
-        guard let activity = context as? (name: String, type: HKWorkoutActivityType) else { return }
+        guard let activity = context as? MovementActivity else { return }
         currentActivity = activity
-
-        switch activity.type {
-        case .swimming:
-            distanceType = .distanceSwimming
-        case .cycling:
-            distanceType = .distanceCycling
-        case .running:
-            distanceType = .distanceWalkingRunning
-        default:
-            break
-        }
 
         requestAutorization(in: healthStore)
     }
@@ -115,12 +103,12 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
             .workoutType(),
             HKSampleType.quantityType(forIdentifier: .heartRate)!,
             HKSampleType.quantityType(forIdentifier: .activeEnergyBurned)!,
-            HKSampleType.quantityType(forIdentifier: distanceType)!]
+            HKSampleType.quantityType(forIdentifier: currentActivity.distanceType)!]
         let typesToRead: Set<HKObjectType> = [
             .activitySummaryType(),
             HKObjectType.quantityType(forIdentifier: .heartRate)!,
             HKObjectType.quantityType(forIdentifier: .activeEnergyBurned)!,
-            HKObjectType.quantityType(forIdentifier: distanceType)!]
+            HKObjectType.quantityType(forIdentifier: currentActivity.distanceType)!]
 
         healthStore.requestAuthorization(toShare: typesToSave, read: typesToRead, completion: { [weak self] (success, _) in
             if success {
@@ -164,7 +152,7 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
     private func startQueries() {
         startQuery(for: .heartRate)
         startQuery(for: .activeEnergyBurned)
-        startQuery(for: distanceType)
+        startQuery(for: currentActivity.distanceType)
         WKInterfaceDevice.current().play(.start)
     }
 
@@ -233,7 +221,7 @@ class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelega
                 let newEnergy = sample.quantity.doubleValue(for: HKUnit(from: .kilocalorie))
                 let currentEnergy = totalEnergyBurned.doubleValue(for: HKUnit(from: .kilocalorie))
                 totalEnergyBurned = HKQuantity(unit: HKUnit(from: .kilocalorie), doubleValue: currentEnergy + newEnergy)
-            case distanceType:
+            case currentActivity.distanceType:
                 let newDistance = sample.quantity.doubleValue(for: HKUnit(from: .meter))
                 let currentDistance = totalDistance.doubleValue(for: HKUnit(from: .meter))
                 totalDistance = HKQuantity(unit: HKUnit(from: .meter), doubleValue: newDistance + currentDistance)

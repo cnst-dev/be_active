@@ -16,17 +16,19 @@ class StartInterfaceController: WKInterfaceController {
     @IBOutlet private var activityPicker: WKInterfacePicker!
 
     // MARK: - Properties
-    private let activities: [(name: String, type: HKWorkoutActivityType)] = [
-        ("Swimming", .swimming),
-        ("Cycling", .cycling),
-        ("Running", .running)
+    private let activities = [
+        MovementActivity(name: "Swimming", type: .swimming, distanceType: .distanceSwimming),
+        MovementActivity(name: "Cycling", type: .cycling, distanceType: .distanceCycling),
+        MovementActivity(name: "Running", type: .running, distanceType: .distanceWalkingRunning)
     ]
 
-    private var currentActivity = (name: "Swimming", type: HKWorkoutActivityType.swimming)
+    private var currentActivity: MovementActivity!
 
     // MARK: - WKInterfaceController
     override func awake(withContext context: Any?) {
         super.awake(withContext: context)
+
+        currentActivity = activities.first
 
         activityPicker.setItems(makePickerItems(from: activities))
     }
@@ -36,7 +38,7 @@ class StartInterfaceController: WKInterfaceController {
     ///
     /// - Parameter dictionary: An activity dictionary.
     /// - Returns: A picker items array.
-    private func makePickerItems(from activities: [(name: String, type: HKWorkoutActivityType)]) -> [WKPickerItem] {
+    private func makePickerItems(from activities: [MovementActivity]) -> [WKPickerItem] {
         var activityItems = [WKPickerItem]()
 
         for activity in activities {
