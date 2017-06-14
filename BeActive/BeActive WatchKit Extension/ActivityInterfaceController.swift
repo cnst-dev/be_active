@@ -13,13 +13,13 @@ import HealthKit
 class ActivityInterfaceController: WKInterfaceController, HKWorkoutSessionDelegate {
 
     // MARK: - Nested
-    enum HUDTypes: String {
+    private enum HUDTypes: String {
         case heartRate = "BEATS/MINUTE", energy = "Kilocalories", distance = "Kilometers"
     }
 
     // MARK: - Outlets
     @IBOutlet private var valueLabel: WKInterfaceLabel!
-    @IBOutlet var unitLabel: WKInterfaceLabel!
+    @IBOutlet private var unitLabel: WKInterfaceLabel!
     @IBOutlet private var pauseButton: WKInterfaceButton!
     @IBOutlet private var continueButton: WKInterfaceButton!
     @IBOutlet private var endButton: WKInterfaceButton!
